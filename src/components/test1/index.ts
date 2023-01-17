@@ -3,6 +3,6 @@ export default class {
         console.log(x, 1);
     }
     init() {
-        console.log(22);
+        console.log(222222);
     }
 }
