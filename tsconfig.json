@@ -1,0 +1,33 @@
+{
+  /*
+      ts编译器的配置文件
+      "include"  用来指定那些ts文件需要被编译,**表示任意目录，*表示任意文件
+      "exclide" 写法同include
+  */
+  "include": [
+    "./index.ts",
+  ],
+  "exclude": [],
+  "compilerOptions": {
+    //target 用来指定ts被编译的es版本
+    "target": "es5",
+    "module": "es6", //模块规范
+    //  "lib": ["dom","ES6"],//表示项目中要使用的库 "dom"
+    "outDir": "./dist", //用来指定编译后的js文件的存放目录
+    "experimentalDecorators": true, //启用装饰器
+    //outFile将代码合并成一个文件
+    "moduleResolution": "node",
+    "downlevelIteration": true,
+    "allowJs": false, //是否对js文件进行编译，默认为false
+    "checkJs": false, //检查js代码是否符合语法规范
+    "removeComments": true, //是否移除注释
+    "noEmit": true, //不生产编译文件
+    "noEmitOnError": false, //出错之后不生产编译文件
+    "strict": false, //所有严格检查的总开关
+    "alwaysStrict": false, //设置编译后的文件是否严格模式
+    "noImplicitAny": false, //不允许隐式any类型
+    "noImplicitThis": false, //不允许调用不明确的 this
+    "strictNullChecks": false, //严格检查空值
+    "allowSyntheticDefaultImports": true,
+  }
+}
