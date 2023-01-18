@@ -56,7 +56,7 @@ export default class Main {
         this.defaultPerspectiveCameraParams = {
             fov: 75,
             near: 0.1,
-            far: 1000,
+            far: 10000,
             aspect: Main.math.getAspect(this.container),
             position: new THREE.Vector3(0, 0, 100),
             target: new THREE.Vector3(0, 0, 0),
@@ -68,7 +68,7 @@ export default class Main {
             top: 0,
             bottom: 0,
             near: -100,
-            far: 1000,
+            far: 10000,
             zoom: 2,
             position: new THREE.Vector3(0, 0, 100),
             target: new THREE.Vector3(0, 0, 0),
@@ -155,7 +155,16 @@ export default class Main {
     }
     /**创建一个用于绘制shader的场景 */
     initShader(): void {
-
+        this.createRenderer();
+        this.createScene();
+        this.createCamera({
+            type: "OrthographicCamera",
+            position: new THREE.Vector3(0, 0, 0),
+        });
+        this.addListenEvent();
+        this.createDebug({ stats: true, gui: true, });
+        this.onSceneCeated();
+        this.render();
     }
     /**创建一个渲染器 */
     createRenderer(params: { config?: THREE.WebGLRendererParameters; setting?: RendererParams; } = { config: {}, setting: {} }): void {
@@ -231,7 +240,7 @@ export default class Main {
     }
     /**创建一个标准网格 */
     createBaseMesh(): void {
-        this.geometry = new THREE.PlaneGeometry(100, 100, 1, 1);
+        this.geometry = new THREE.PlaneGeometry(this.container.clientWidth / 8, this.container.clientHeight / 8, 1, 1);
         this.material = new THREE.ShaderMaterial({
             vertexShader: Main.glslChunk.glslTemplate.vertex_shader_base_template,
             fragmentShader: Main.glslChunk.glslTemplate.fragement_shader_base_template,
@@ -327,9 +336,11 @@ export default class Main {
         this.defaultPerspectiveCameraParams = { ...this.defaultPerspectiveCameraParams, ...params };
         this._updatePerspectiveCamera(this.defaultPerspectiveCameraParams);
         const config = this.defaultPerspectiveCameraParams;
+        params.autoFov && (config.fov = Main.math.rad2Deg(2 * Math.atan(this.container.clientHeight / 2 / config.position.z)));
         const camera = new THREE.PerspectiveCamera(config.fov, config.aspect, config.near, config.far);
         camera.position.copy(config.position);
         camera.lookAt(config.target);
+
         params.name && (camera.name = params.name);
         return camera;
     }
@@ -338,7 +349,7 @@ export default class Main {
         this.defaultOrthographicCameraParams = { ...this.defaultOrthographicCameraParams, ...params };
         this._updateOrthographicCamera(this.defaultOrthographicCameraParams);
         const config = this.defaultOrthographicCameraParams;
-        const camera = new THREE.OrthographicCamera(config.fov, config.aspect, config.near, config.far);
+        const camera = new THREE.OrthographicCamera(config.left, config.right, config.top, config.bottom, config.near, config.far);
         camera.position.copy(config.position);
         camera.lookAt(config.target);
         params.name && (camera.name = params.name);
@@ -348,27 +359,27 @@ export default class Main {
     private _updatePerspectiveCamera(params: CameraParams): void {
         if (this.camera instanceof THREE.PerspectiveCamera) {
             this.defaultPerspectiveCameraParams.aspect = Main.math.getAspect(this.container!);
+            params.autoFov && (this.defaultPerspectiveCameraParams.fov = Main.math.rad2Deg(2 * Math.atan(this.container.clientHeight / 2 / this.defaultPerspectiveCameraParams.position.z)));
+            this.camera.fov = this.defaultPerspectiveCameraParams.fov;
             this.camera && (this.camera.aspect = this.defaultPerspectiveCameraParams.aspect);
             this.camera && this.camera.updateProjectionMatrix();
-            // this.camera && this.camera.autoFov && (this.camera.fov = Main.math.rad2Deg(2 * Math.atan(window.innerHeight / 2 / this.camera.position.z)));
+
         }
     }
     /**更新正交相机 */
     private _updateOrthographicCamera(params: OrthographicCameraParams): void {
-        if (this.camera instanceof THREE.OrthographicCamera) {
-            const { zoom, near, far } = params;
-            const aspect = Main.math.getAspect(this.container);
-            this.defaultOrthographicCameraParams = {
-                ...params,
-                left: -zoom * aspect,
-                right: zoom * aspect,
-                top: zoom,
-                bottom: -zoom,
-                near,
-                far,
-                zoom
-            };
-        }
+        const { zoom, near, far } = params;
+        const aspect = Main.math.getAspect(this.container);
+        this.defaultOrthographicCameraParams = {
+            ...params,
+            left: -zoom * aspect,
+            right: zoom * aspect,
+            top: zoom,
+            bottom: -zoom,
+            near,
+            far,
+            zoom
+        };
     }
     private _rendererDrawResize(): void {
         if (!this._renderer) return;
