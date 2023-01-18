@@ -38,7 +38,13 @@ module.exports = {
 					filename: "image/[hash:5][ext]"
 				},
 				exclude: /node-modules/
-			}
+			}, {
+				test: /\.(glsl|vs|fs)$/,
+				exclude: /node_modules/,
+				use: [
+					'ts-shader-loader'
+				]
+			},
 		]
 	},
 	mode: "development",//配置工作模式
@@ -65,6 +71,7 @@ module.exports = {
 		extensions: [".ts", ".js"],//解决ts模块引入失败问题
 		alias: {
 			'@': path.resolve(__dirname, 'src'),
+			"@type": path.resolve(__dirname, 'types'),
 		}
 	},
 

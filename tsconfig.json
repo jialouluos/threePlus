@@ -6,6 +6,9 @@
   */
   "include": [
     "./index.ts",
+    "./typings/*",
+    "./types/*",
+    "./src/**/**/*",
   ],
   "exclude": [],
   "compilerOptions": {
@@ -18,8 +21,8 @@
     //outFile将代码合并成一个文件
     "moduleResolution": "node",
     "downlevelIteration": true,
-    "allowJs": false, //是否对js文件进行编译，默认为false
-    "checkJs": false, //检查js代码是否符合语法规范
+    "allowJs": true, //是否对js文件进行编译，默认为false
+    "checkJs": true, //检查js代码是否符合语法规范
     "removeComments": true, //是否移除注释
     "noEmit": true, //不生产编译文件
     "noEmitOnError": false, //出错之后不生产编译文件
@@ -29,5 +32,18 @@
     "noImplicitThis": false, //不允许调用不明确的 this
     "strictNullChecks": false, //严格检查空值
     "allowSyntheticDefaultImports": true,
-  }
+    "typeRoots": [
+      "./node_modules/@types",
+      "./typings",
+    ],
+    "paths": {
+      "@/*": [
+        "src/*"
+      ], // 别名配置
+      "@type/*": [
+        "types/*"
+      ], // 别名配置
+    },
+    "baseUrl": "./"
+  },
 }
