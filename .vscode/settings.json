@@ -1,0 +1,19 @@
+{
+    "livePreview.defaultPreviewPath": "g:\\ThreePlus\\index.html",
+    "cSpell.enableFiletypes": [
+        "raw",
+        "typescript"
+    ],
+    "cSpell.words": [
+        "Equirectangular",
+        "fract",
+        "glsl",
+        "gsap",
+        "Lensflare",
+        "pmrem",
+        "Raycaster",
+        "RGBE",
+        "SRGBA",
+        "texels"
+    ]
+}
