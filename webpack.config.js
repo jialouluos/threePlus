@@ -27,7 +27,7 @@ module.exports = {
 				exclude: /node-modules/
 			},
 			{
-				test: /\.(png|jpe?g|gif|webp|svg)$/,
+				test: /\.(png|jpe?g|gif|webp|svg|hdr)$/,
 				type: "asset",
 				parser: {
 					dataUrlCondtion: {
@@ -65,13 +65,14 @@ module.exports = {
 		host: "localhost",
 		port: "3000",
 		open: true,
-		hot: true
+		hot: true,
 	},
 	resolve: {
 		extensions: [".ts", ".js"],//解决ts模块引入失败问题
 		alias: {
 			'@': path.resolve(__dirname, 'src'),
 			"@type": path.resolve(__dirname, 'types'),
+			"@Main": path.resolve(__dirname, './src/components/Main'),
 		}
 	},
 

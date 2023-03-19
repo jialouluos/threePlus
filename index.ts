@@ -1,4 +1,4 @@
-import Demo from '@/pages/shader_normal';
+import Demo from '@/pages/3D坐标轴';
 const start = () => {
     const demo = new Demo("#root", true);
     demo.init();

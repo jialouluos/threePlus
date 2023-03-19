@@ -43,6 +43,9 @@
       "@type/*": [
         "types/*"
       ], // 别名配置
+      "@Main": [
+        "./src/components/Main"
+      ]
     },
     "baseUrl": "./"
   },
