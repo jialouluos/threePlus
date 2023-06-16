@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { OrbitControls } from '../util/_controls';
+import { OrbitControls } from '@/util/_controls';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -11,6 +11,7 @@ import gsap from "gsap";
 import mathPlus from './mathPlus';
 import glslShader from './glslShader';
 import Track from './track';
+import { Object3D } from 'three';
 
 export interface sceneParams {
     name?: string;
@@ -39,6 +40,7 @@ export interface RendererParams {
 }
 export default class Main {
     constructor(el: string | HTMLElement, debug?: boolean) {
+
         if (typeof el === 'string') {
             this.container = document.querySelector(el);
         } else {
@@ -49,6 +51,7 @@ export default class Main {
             config: {
                 alpha: true,
                 antialias: true,
+                precision: "highp"
             },
             setting: {
                 outputEncoding: THREE.sRGBEncoding,
@@ -314,6 +317,10 @@ export default class Main {
     onSceneBeforeDispose(): void {
 
     }
+    /**在一次渲染结束 */
+    onSceneRenderCompleted(): void {
+
+    }
     /**销毁场景,释放内存 */
     dispose(): void {
         this.onSceneBeforeDispose();
@@ -357,8 +364,9 @@ export default class Main {
             } else {
                 this.renderer.render(this.scene, this.camera);
             }
+            this.onSceneRenderCompleted();
         });
-    }
+    };
     /**日志 */
     public info() {
         console.log(this.renderer.info);

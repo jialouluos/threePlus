@@ -1,4 +1,4 @@
-import Demo from '@/pages/3D坐标轴';
+import Demo from '@/pages/物体编辑器';
 const start = () => {
     const demo = new Demo("#root", true);
     demo.init();

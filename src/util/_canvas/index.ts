@@ -149,12 +149,12 @@ export default class MyCanvas {
    * image(资源路径,绘制之后的操作,重复方式)
    * ```
    */
-    public image(url: string, cb: () => void) {
+    public image(url: string, cb?: (image: HTMLImageElement) => void) {
         const image = new Image();
         image.src = url;
         image.onload = () => {
             this._ctx.drawImage(image, 0, 0, this._canvas.width, this._canvas.height);
-            cb();
+            cb && cb(image);
         };
     }
     /**
@@ -231,5 +231,15 @@ export default class MyCanvas {
   */
     public drawFromUint8Array(data: Uint8ClampedArray, width: number, height: number) {
         this._ctx.putImageData(new ImageData(data, width, height), 0, 0);
+    }
+    /**
+    * @获取当前绘制的图像数据
+    * ```
+    * getDataFromCurrentImage()
+    * ```
+    */
+    public getDataFromCurrentImage() {
+        const imageData = this._ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
+        return imageData.data;
     }
 }

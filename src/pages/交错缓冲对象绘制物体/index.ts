@@ -101,7 +101,7 @@ export default class extends Main {
             vertexColors: true,
             // color: "#ff0000"
         });
-        console.log(this.geometry)
+        console.log(this.geometry);
         this.scene.add(new THREE.Points(this.geometry, this.material));
     }
 
