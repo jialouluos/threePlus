@@ -1,3 +1,4 @@
+import { EventEmitter } from 'eventemitter3';
 import * as THREE from 'three';
 import { OrbitControls } from '@/util/_controls';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -10,55 +11,60 @@ import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import gsap from "gsap";
 import mathPlus from './mathPlus';
 import glslShader from './glslShader';
-import Track from './track';
+import Track from './Track';
 import { Object3D } from 'three';
 
-export interface sceneParams {
-    name?: string;
-}
-export interface CameraParams {
-    fov?: number;
+
+export interface CameraOption {
     near?: number;
     far?: number;
-    aspect?: number;
-    zoom?: number;
     name?: string;
     autoFov?: boolean;
     position?: THREE.Vector3;
     target?: THREE.Vector3;
+    zoom?: number;
     type: 'PerspectiveCamera' | 'OrthographicCamera';
 }
-export interface OrthographicCameraParams extends CameraParams {
-    left: number;
-    right: number;
-    top: number;
-    bottom: number;
+export interface OrthographicOption extends CameraOption {
+    left?: number;
+    right?: number;
+    top?: number;
+    bottom?: number;
+    type: 'OrthographicCamera';
+}
+export interface PerspectiveOption extends CameraOption {
+    fov?: number;
+    aspect?: number;
+    type: 'PerspectiveCamera';
 }
 export interface RendererParams {
     backgroundColor?: THREE.Color;
     outputEncoding?: THREE.TextureEncoding;
 }
-export default class Main {
+interface I_Event {
+    pointerUp: (e: PointerEvent, mousePos: THREE.Vector2) => void;
+}
+export default class Main extends EventEmitter<I_Event>{
     constructor(el: string | HTMLElement, debug?: boolean) {
-
+        super();
         if (typeof el === 'string') {
             this.container = document.querySelector(el);
         } else {
             this.container = el;
         }
         this.debug = debug ?? false;
-        this.defaultRendererParams = {
+        this.rendererOption = {
             config: {
                 alpha: true,
                 antialias: true,
-                precision: "highp"
+                precision: "highp",
             },
             setting: {
                 outputEncoding: THREE.sRGBEncoding,
                 backgroundColor: new THREE.Color("#000")
             }
         };
-        this.defaultPerspectiveCameraParams = {
+        this.perspectiveOption = {
             fov: 75,
             near: 0.001,
             far: 10000,
@@ -67,7 +73,7 @@ export default class Main {
             target: new THREE.Vector3(0, 0, 0),
             type: "PerspectiveCamera"
         };
-        this.defaultOrthographicCameraParams = {
+        this.orthographicOption = {
             left: 0,
             right: 0,
             top: 0,
@@ -92,8 +98,9 @@ export default class Main {
         this.lightGroups = new THREE.Group();
         this.hdrLoader = new RGBELoader().setPath('hdr/');
         this._rayCaster = new THREE.Raycaster();
+        const resizeObserver = new ResizeObserver(this.rendererDrawResize);
+        resizeObserver.observe(this.container!);
     }
-    ispe: boolean;
     /**挂载DOM */
     container: HTMLElement;
     /**开启debug */
@@ -107,11 +114,11 @@ export default class Main {
     /**渲染器 */
     renderer: THREE.WebGLRenderer | null;
     /**渲染器参数 */
-    defaultRendererParams: { config: THREE.WebGLRendererParameters; setting: RendererParams; };
+    rendererOption: { config: THREE.WebGLRendererParameters; setting: RendererParams; };
     /**透视相机参数 */
-    defaultPerspectiveCameraParams: CameraParams;
+    perspectiveOption: PerspectiveOption;
     /**正交相机参数 */
-    defaultOrthographicCameraParams: OrthographicCameraParams;
+    orthographicOption: OrthographicOption;
     /**轨道控制器 */
     private _controls: OrbitControls;
     /**鼠标坐标 */
@@ -141,7 +148,7 @@ export default class Main {
     /**后处理通道 */
     composer: EffectComposer;
     /**三方动画库 */
-    $gsap: GSAP;
+    $gsap: gsap;
     /**三方调试库 */
     $gui: GUI;
     /**三方性能探测器 */
@@ -162,7 +169,7 @@ export default class Main {
         });
         this.createLight(2);
         this.createControls();
-        this.addListenEvent();
+        this.addSelfListenEvent();
         this.createDebug({ stats: true });
         this.onSceneCreated();
         this.render();
@@ -175,36 +182,29 @@ export default class Main {
             type: "OrthographicCamera",
             position: new THREE.Vector3(0, 0, 0),
         });
-        this.addListenEvent();
+        this.addSelfListenEvent();
         this.createDebug({ stats: true, gui: true, });
         this.onSceneCreated();
-
         this.render();
 
     }
     /**创建一个渲染器 */
-    createRenderer(params: { config?: THREE.WebGLRendererParameters; setting?: RendererParams; } = { config: {}, setting: {} }, cb?: (arg: THREE.WebGLRenderer) => void): void {
-        const { config, setting } = this.defaultRendererParams;
+    createRenderer(params: { config?: THREE.WebGLRendererParameters; setting?: RendererParams; } = { config: {}, setting: {} }): void {
+        const { config, setting } = this.rendererOption;
         this.renderer = new THREE.WebGLRenderer({ ...config, ...(params.config ? params.config : {}) });
-        this.renderer.outputEncoding = setting.outputEncoding;
-        this.renderer.setClearColor(setting.backgroundColor);
-        if (params.setting) {
-            params.setting.backgroundColor && this.renderer.setClearColor(params.setting.backgroundColor);
-            params.setting.outputEncoding && (this.renderer.outputEncoding = params.setting.outputEncoding);
-        }
+        this.renderer.outputEncoding = setting.outputEncoding ?? params.setting.outputEncoding;
+        this.renderer.setClearColor(setting.backgroundColor ?? params.setting.backgroundColor);
         this.renderer.setSize(this.container!.clientWidth, this.container!.clientHeight);
-        cb && cb(this.renderer);
         this.container.appendChild(this.renderer.domElement);
-        this.rendererDrawResize();
+
     }
     /**创建一个场景 */
-    createScene(params?: sceneParams): void {
+    createScene(): void {
         this.scene = new THREE.Scene();
-        params && params.name && (this.scene.name = params.name);
         this.scene.add(this.lightGroups);
     }
     /**创建一个相机 */
-    createCamera(params: CameraParams): void {
+    createCamera(params: PerspectiveOption | OrthographicOption): void {
         if (params.type === "PerspectiveCamera") {
             this.camera = this._createPerspectiveCamera(params);
         } else {
@@ -233,9 +233,9 @@ export default class Main {
     createControls(cb?: (controls: OrbitControls) => void): void {
         this._controls = new OrbitControls(this.camera, this.renderer.domElement);
         if (this.camera instanceof THREE.PerspectiveCamera)
-            this._controls.target.copy(this.defaultPerspectiveCameraParams.target);
+            this._controls.target.copy(this.perspectiveOption.target);
         else {
-            this._controls.target.copy(this.defaultOrthographicCameraParams.target);
+            this._controls.target.copy(this.orthographicOption.target);
         }
         cb && cb(this._controls);
     }
@@ -280,11 +280,11 @@ export default class Main {
     }
     handleSize = () => {
         if (this.camera instanceof THREE.PerspectiveCamera) {
-            this._updatePerspectiveCamera(this.defaultPerspectiveCameraParams);
+            this._updatePerspectiveCamera(this.perspectiveOption);
         } else if (this.camera instanceof THREE.OrthographicCamera) {
             const camera = this.camera;
-            this._updateOrthographicCamera(this.defaultOrthographicCameraParams);
-            const { left, right, top, bottom, near, far } = this.defaultOrthographicCameraParams;
+            this._updateOrthographicCamera(this.orthographicOption);
+            const { left, right, top, bottom, near, far } = this.orthographicOption;
             camera.left = left;
             camera.right = right;
             camera.top = top;
@@ -293,15 +293,23 @@ export default class Main {
             camera.far = far;
             camera.updateProjectionMatrix();
         }
-        this.renderer.setSize(this.container!.clientWidth, this.container!.clientHeight);
     };
     /**添加事件 */
-    addListenEvent(): void {
-        window.addEventListener("resize", this.handleSize);
+    addSelfListenEvent(): void {
         window.onbeforeunload = () => {
             this.dispose();
         };
+        this.container.addEventListener("pointerup", this.onPointerUp);
+        this.container.addEventListener("pointerdown", this.onPointerDown);
     }
+    onPointerUp = (e) => {
+        this.emit('pointerUp', e, this.mousePos);
+    };
+
+    onPointerDown = (e) => {
+        this.mousePos.x = e.clientX;
+        this.mousePos.y = e.clientY;
+    };
     /**在场景渲染完成之后 */
     async onSceneCreatedAsync(): Promise<any> {
     }
@@ -324,9 +332,10 @@ export default class Main {
     /**销毁场景,释放内存 */
     dispose(): void {
         this.onSceneBeforeDispose();
-        window.removeEventListener("resize", this.handleSize);
         Main.track.track(this.scene);
         try {
+            this.container.removeEventListener("pointerup", this.onPointerUp);
+            this.container.removeEventListener("pointerdown", this.onPointerDown);
             this.renderer.setAnimationLoop(null);
             this.scene.clear();
             Main.track && Main.track.allDisTrack();
@@ -346,8 +355,6 @@ export default class Main {
     /**场景重渲染 */
     render(): void {
         this.renderer.setAnimationLoop(() => {
-            this.rendererDrawResize();
-
             if (this._clock) {
                 this.u_Time.value = this._clock.getElapsedTime() * this.timeScale;
                 Main.math.update(this.u_Time.value);
@@ -366,30 +373,29 @@ export default class Main {
             }
             this.onSceneRenderCompleted();
         });
-    };
+    }
     /**日志 */
     public info() {
         console.log(this.renderer.info);
         Main.track.info();
     }
     /**创建一个透视相机 */
-    private _createPerspectiveCamera(params: CameraParams): THREE.PerspectiveCamera {
-        this.defaultPerspectiveCameraParams = { ...this.defaultPerspectiveCameraParams, ...params };
-        this._updatePerspectiveCamera(this.defaultPerspectiveCameraParams);
-        const config = this.defaultPerspectiveCameraParams;
+    private _createPerspectiveCamera(params: PerspectiveOption): THREE.PerspectiveCamera {
+        this.perspectiveOption = { ...this.perspectiveOption, ...params };
+        this._updatePerspectiveCamera(this.perspectiveOption);
+        const config = this.perspectiveOption;
         params.autoFov && (config.fov = Main.math.rad2Deg(2 * Math.atan(this.container.clientHeight / 2 / config.position.z)));
         const camera = new THREE.PerspectiveCamera(config.fov, config.aspect, config.near, config.far);
         camera.position.copy(config.position);
         camera.lookAt(config.target);
-
         params.name && (camera.name = params.name);
         return camera;
     }
     /**创建一个正交相机 */
-    private _createOrthographicCamera(params: CameraParams): THREE.OrthographicCamera {
-        this.defaultOrthographicCameraParams = { ...this.defaultOrthographicCameraParams, ...params };
-        this._updateOrthographicCamera(this.defaultOrthographicCameraParams);
-        const config = this.defaultOrthographicCameraParams;
+    private _createOrthographicCamera(params: OrthographicOption): THREE.OrthographicCamera {
+        this.orthographicOption = { ...this.orthographicOption, ...params };
+        this._updateOrthographicCamera(this.orthographicOption);
+        const config = this.orthographicOption;
         const camera = new THREE.OrthographicCamera(config.left, config.right, config.top, config.bottom, config.near, config.far);
         camera.position.copy(config.position);
         camera.lookAt(config.target);
@@ -397,43 +403,43 @@ export default class Main {
         return camera;
     }
     /**更新透视相机 */
-    private _updatePerspectiveCamera(params: CameraParams): void {
+    private _updatePerspectiveCamera(params: PerspectiveOption): void {
         if (this.camera instanceof THREE.PerspectiveCamera) {
-            this.defaultPerspectiveCameraParams.aspect = Main.math.getAspect(this.container!);
-            params.autoFov && (this.defaultPerspectiveCameraParams.fov = Main.math.rad2Deg(2 * Math.atan(this.container.clientHeight / 2 / this.defaultPerspectiveCameraParams.position.z)));
-            this.camera.fov = this.defaultPerspectiveCameraParams.fov;
-            this.camera && (this.camera.aspect = this.defaultPerspectiveCameraParams.aspect);
+            this.perspectiveOption.aspect = Main.math.getAspect(this.container!);
+            params.autoFov && (this.perspectiveOption.fov = Main.math.rad2Deg(2 * Math.atan(this.container.clientHeight / 2 / this.perspectiveOption.position.z)));
+            this.camera.fov = this.perspectiveOption.fov;
+            this.camera && (this.camera.aspect = this.perspectiveOption.aspect);
             this.camera && this.camera.updateProjectionMatrix();
-
         }
     }
     /**更新正交相机 */
-    private _updateOrthographicCamera(params: OrthographicCameraParams): void {
-        const { zoom, near, far } = params;
-        const aspect = Main.math.getAspect(this.container);
-        this.defaultOrthographicCameraParams = {
-            ...params,
-            left: -zoom * aspect,
-            right: zoom * aspect,
-            top: zoom,
-            bottom: -zoom,
-            near,
-            far,
-            zoom
-        };
-    }
-    private rendererDrawResize(): void {
-        if (!this.renderer) return;
-
-        const canvas = this.renderer.domElement;
-        const pixelRatio = window.devicePixelRatio;
-        const { clientWidth, clientHeight } = canvas;
-        const width = (clientWidth * pixelRatio) | 0;
-        const height = (clientHeight * pixelRatio) | 0;
-        const isNeedResetCanvasDrawSize = (canvas.width !== width || canvas.height !== height);
-        if (isNeedResetCanvasDrawSize) {
-            this.renderer.setSize(width, height, false);
+    private _updateOrthographicCamera(params: OrthographicOption): void {
+        if (this.camera instanceof THREE.PerspectiveCamera) {
+            const { zoom, near, far } = params;
+            const aspect = Main.math.getAspect(this.container);
+            this.orthographicOption = {
+                ...params,
+                left: -zoom * aspect,
+                right: zoom * aspect,
+                top: zoom,
+                bottom: -zoom,
+                near,
+                far,
+                zoom
+            };
         }
     }
+    private rendererDrawResize = (entries): void => {
+        if (!this.renderer) return;
+        const canvas = this.renderer.domElement;
+        const pixelRatio = window.devicePixelRatio;
+        const width = (entries[0].borderBoxSize[0].inlineSize * pixelRatio) | 0;
+        const height = (entries[0].borderBoxSize[0].blockSize * pixelRatio) | 0;
+        const isNeedResetCanvasDrawSize = (canvas.width !== width || canvas.height !== height);
+        if (isNeedResetCanvasDrawSize) {
+            this.renderer.setSize(width, height, true);
+            this.handleSize();
+        }
+    };
 
 }

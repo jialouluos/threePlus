@@ -17,7 +17,7 @@
     "module": "ESNext", //模块规范
     "lib": [
       "dom",
-      "ES6"
+      "ES2023"
     ], //表示项目中要使用的库 "dom"
     "outDir": "./dist", //用来指定编译后的js文件的存放目录
     "experimentalDecorators": true, //启用装饰器
