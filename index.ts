@@ -1,4 +1,5 @@
-import Demo from '@/pages/物体编辑器';
+
+import Demo from '@/pages/Matcap材质';
 const start = () => {
     const demo = new Demo("#root", true);
     demo.init();
