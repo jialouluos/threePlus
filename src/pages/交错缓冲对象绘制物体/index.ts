@@ -12,7 +12,7 @@ export default class extends Main {
         });
         this.createLight(2);
         this.createControls();
-        this.addListenEvent();
+        this.addSelfListenEvent();
         this.createDebug({ stats: true });
         this.onSceneCreated();
         this.render();
@@ -70,7 +70,9 @@ export default class extends Main {
         const R = 100;
         const points = this.createSphere(R, false);
         const len = points.length;
-        //一个字节8bit，4个字节32bit，我们采用Float32Buffer，则需要12个字节去储存坐标，颜色我们采用Uint8Buffer去存储，所以4个字节来储存顶点颜色的rgba值
+        //一个字节8bit，我们采用Float32Buffer，32位浮点数数组即每个元素占用32位，即4个字节，我们需要存储x,y,z。则一共需要12个字节去储存坐标
+        //颜色我们采用Uint8Buffer去存储，8位无符号整数即每个元素占用8位，即1个字节，所以一共4个字节来储存顶点颜色的rgba值
+        //所以储存一套顶点＋颜色需要16个字节
         const arrayBuffer = new ArrayBuffer(len * 16);//创建原始原始二进制数据缓冲区
         const interleavedFloat32Buffer = new Float32Array(arrayBuffer);
         const interleavedUnint8buffer = new Uint8Array(arrayBuffer);
@@ -88,12 +90,13 @@ export default class extends Main {
             interleavedUnint8buffer[j + 2] = b * 255;
             interleavedUnint8buffer[j + 3] = a * 255;
         }
-        //这里stride表示一个顶点包含几个数组元素，我们是4位一组(xyz + rgba)，8的就包含16位一组(xyz + rgba)
+        //这里stride表示一个顶点包含几个数组元素，对于32位我们是4个元素一组(xyz + rgba(这个不会用))，8位是16个元素一组(xyz(12个字节，这个不用) + rgba)
         const interleavedBuffer32 = new THREE.InterleavedBuffer(interleavedFloat32Buffer, 4);
         const interleavedBuffer8 = new THREE.InterleavedBuffer(interleavedUnint8buffer, 16);
-        //这里stride表示每一个顶点需要占的位数大小，32的一共4位，他占了前面3位，并且从0字节处开始读取
+
+        //interleavedBuffer32表明了该数组以多少个元素为一组，这里只需要表明实际使用的位数以及偏移量即可
         this.geometry.setAttribute('position', new THREE.InterleavedBufferAttribute(interleavedBuffer32, 3, 0, false));
-        //8的我们是16位，他占了前面最后4位(rgba)，并且从12字节处开始读取
+        //interleavedUnint8buffer表明了该数组以多少个元素为一组，这里只需要表明实际使用的位数以及偏移量即可
         this.geometry.setAttribute('color', new THREE.InterleavedBufferAttribute(interleavedBuffer8, 4, 12, true));
         const geometry2 = new THREE.BufferGeometry().setFromPoints(points);
         this.material = new THREE.PointsMaterial({

@@ -18,5 +18,5 @@ export default class extends Main {
         const sphere = new THREE.Mesh(geometry, material);
         this.scene.add(sphere);
     }
-
+    
 }

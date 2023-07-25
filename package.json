@@ -15,7 +15,9 @@
   "license": "ISC",
   "dependencies": {
     "eventemitter3": "^5.0.0",
+    "i": "^0.3.7",
     "path": "^0.12.7",
+    "stats-js": "^1.0.1",
     "three": "^0.148.0",
     "webpack": "^5.75.0",
     "webpack-dev-server": "^4.11.1"
