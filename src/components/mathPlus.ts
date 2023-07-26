@@ -95,6 +95,48 @@ export default class mathPlus {
          */
         return new THREE.Quaternion(_a.x / qq.w, _a.y / qq.w, _a.z / qq.w, _a.w / qq.w);
     }
+    getGeometryByteLength = (geometry: THREE.BufferGeometry) => {
+
+        let total = 0;
+
+        if (geometry.index) total += geometry.index.array.byteLength;
+
+        for (const name in geometry.attributes) {
+
+            total += geometry.attributes[name].array.byteLength;
+
+        }
+
+        return total;
+
+    };
+    formatBytes = (bytes: number, decimals: number) => {
+
+        if (bytes === 0) return '0 bytes';
+
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['bytes', 'KB', 'MB'];
+
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+
+    };
+    getMemory(object: THREE.Object3D, type: "instanced" | "normal"): string;
+    getMemory(object: THREE.Object3D, type: "instanced" | "normal", instancedCount: number): string;
+    getMemory(object: THREE.Object3D, type: "instanced" | "normal", instancedCount?: number): string {
+        let memory = 0;
+        object.traverse((obj) => {
+
+            if (obj.geometry) {
+                memory += this.getGeometryByteLength(obj.geometry);
+            }
+
+        });
+        return this.formatBytes(type === "instanced" ? instancedCount * 16 + memory : memory, 2);
+    }
+
 }
 // let x = e.clientX;
 // let y = e.clientY;

@@ -57,6 +57,7 @@ export default class Main extends EventEmitter<I_Event>{
                 alpha: true,
                 antialias: true,
                 precision: "highp",
+                logarithmicDepthBuffer:true
             },
             setting: {
                 outputEncoding: THREE.sRGBEncoding,
@@ -430,13 +431,14 @@ export default class Main extends EventEmitter<I_Event>{
     }
     private rendererDrawResize = (entries): void => {
         if (!this.renderer) return;
+
         const canvas = this.renderer.domElement;
         const pixelRatio = window.devicePixelRatio;
         const width = (entries[0].borderBoxSize[0].inlineSize * pixelRatio) | 0;
         const height = (entries[0].borderBoxSize[0].blockSize * pixelRatio) | 0;
         const isNeedResetCanvasDrawSize = (canvas.width !== width || canvas.height !== height);
         if (isNeedResetCanvasDrawSize) {
-            this.renderer.setSize(width, height, true);
+            this.renderer.setSize(width, height, false);
             this.handleSize();
         }
     };

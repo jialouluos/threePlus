@@ -2,7 +2,7 @@
  * @Author: haowen.li1
  * @Date: 2023-07-25 13:57:41
  * @LastEditors: haowen.li1
- * @LastEditTime: 2023-07-26 17:04:35
+ * @LastEditTime: 2023-07-26 20:53:21
  * @Description: 
  */
 
@@ -12,16 +12,12 @@ import * as THREE from 'three';
 export class InstanceModel {
     instanceGroup: InstancedMesh[];
     instanceCount: number;
+    instance: THREE.Object3D;
     constructor(model: Group, instanceCount: number) {
         this.instanceGroup = [];
         this.instanceCount = instanceCount;
         this.traverse(model);
-        // model.traverse(item => {
-        //     if (item instanceof THREE.Mesh) {
-        //         const instance = new InstancedMesh(item.geometry, item.material, instanceCount);
-        //         this.instanceGroup.attach(instance);
-        //     }
-        // });
+        this.instance = model
     }
     setMatrixAt(index, matrixArray: THREE.Matrix4[] | THREE.Matrix4) {
         for (let i = 0, len = this.instanceGroup.length; i < len; i++) {

@@ -38,62 +38,67 @@ export default class extends Main {
     }
     initInstanceMesh() {
         this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            console.log(res);
             const instance = new InstanceModel(res.scene, this.drawCount);
-            console.log(res.scene);
             for (let i = 0; i < this.drawCount; i++) {
                 const matrix4 = new THREE.Matrix4();
                 const position = this.data[i].position;
                 matrix4.setPosition(new THREE.Vector3(position.x, position.y, position.z));
                 instance.setMatrixAt(this.data[i].userData.index, matrix4);
             }
-            // res.scene.position.set(100000, 0, 0);
-            this.scene.add(res.scene.clone());
+            this.scene.add(instance.instance);
         });
-
     }
     initNormalModel() {
         this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
             res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-            console.log(res.scene);
             this.scene.add(res.scene);
+            this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                this.scene.add(res.scene);
+                this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                    this.scene.add(res.scene);
+                    res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+
+                    this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                        res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                        this.scene.add(res.scene);
+                        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                            this.scene.add(res.scene);
+                            this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                                res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                                this.scene.add(res.scene);
+                                this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                                    res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                                    this.scene.add(res.scene);
+                                    this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                                        res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                                        this.scene.add(res.scene);
+                                        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                                            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                                            this.scene.add(res.scene);
+                                            this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                                                res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                                                this.scene.add(res.scene);
+                                                console.log(Main.math.getMemory(this.scene, "normal"));
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
         });
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-            this.scene.add(res.scene);
-        });
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            this.scene.add(res.scene);
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-        });
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-            this.scene.add(res.scene);
-        });
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-            this.scene.add(res.scene);
-        });
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-            this.scene.add(res.scene);
-        });
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-            this.scene.add(res.scene);
-        });
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-            this.scene.add(res.scene);
-        });
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-            this.scene.add(res.scene);
-        });
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
-            this.scene.add(res.scene);
-        });
+
+
+
+
+
+
+
+
 
     }
     initRayCater() {
