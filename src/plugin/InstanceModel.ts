@@ -1,4 +1,11 @@
-import { Matrix4 } from "@/util/_webgl/cuon-matrix";
+/*
+ * @Author: haowen.li1
+ * @Date: 2023-07-25 13:57:41
+ * @LastEditors: haowen.li1
+ * @LastEditTime: 2023-07-26 17:04:35
+ * @Description: 
+ */
+
 import { Group, InstancedMesh, Mesh } from "three";
 import * as THREE from 'three';
 //TODO 同index替换

@@ -10,13 +10,18 @@ export default class extends Main {
         this.initNormal();
     }
     onSceneCreated(): void {
-
-        const material = new THREE.MeshMatcapMaterial({
-            matcap: new THREE.TextureLoader().load("textures/matcap/2.png")
-        });
-        const geometry = new THREE.SphereGeometry(10, 64, 64);
-        const sphere = new THREE.Mesh(geometry, material);
-        this.scene.add(sphere);
+        this.initModel();
+        // const material = new THREE.MeshMatcapMaterial({
+        //     matcap: new THREE.TextureLoader().load("textures/matcap/2.png")
+        // });
+        // const geometry = new THREE.SphereGeometry(10, 64, 64);
+        // const sphere = new THREE.Mesh(geometry, material);
+        // this.scene.add(sphere);
     }
-    
+    initModel() {
+        this.modelLoadByGLTF.load('model/mallotus.glb', (glb) => {
+            this.scene.add(glb.scene);
+            console.log(this.scene);
+        });
+    }
 }

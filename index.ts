@@ -1,5 +1,5 @@
 
-import Demo from '@/pages/Matcap材质';
+import Demo from '@/pages/3D坐标轴';
 const start = () => {
     const demo = new Demo("#root", true);
     demo.init();

@@ -12,7 +12,6 @@ import gsap from "gsap";
 import mathPlus from './mathPlus';
 import glslShader from './glslShader';
 import Track from './Track';
-import { Object3D } from 'three';
 
 
 export interface CameraOption {
@@ -148,7 +147,7 @@ export default class Main extends EventEmitter<I_Event>{
     /**后处理通道 */
     composer: EffectComposer;
     /**三方动画库 */
-    $gsap: gsap;
+    $gsap: typeof gsap;
     /**三方调试库 */
     $gui: GUI;
     /**三方性能探测器 */
