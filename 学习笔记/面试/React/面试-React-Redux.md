@@ -1,0 +1,9 @@
+# Redux
+
+## Redux是什么
+
+Redux是一个数据状态管理的视图层框架，它可以与React、Vue、甚至原生JS结合，可以让一些数据状态的管理变得更加轻松，Redux提供了一个store用于储存需要管理的状态，组件可以通过dispatch将state传入store，也可以从store获取到所需要的数据，React-Redux是将Redux的状态和React的UI呈现绑定在一起，当dispatch action改变state时，就会自动更新页面
+
+## Redux与React-Redux的区别
+
+Redux是一个全局状态管理的插件，它可以在React中使用还可以在Vue、原生js中使用，通过store进行储存需要管理的状态，通过dispatch传递action动作对象，通过Reduce进行数据的更改，通过subscribe通知给订阅者状态更新，而React-Redux是服务于React的一个插件，它主要就是将Redux的dispatch、store等等都封装到顶层组件中，然后以props的方式下发到子组件上
