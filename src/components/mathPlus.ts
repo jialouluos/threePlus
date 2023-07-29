@@ -127,6 +127,7 @@ export default class mathPlus {
     getMemory(object: THREE.Object3D, type: "instanced" | "normal", instancedCount: number): string;
     getMemory(object: THREE.Object3D, type: "instanced" | "normal", instancedCount?: number): string {
         let memory = 0;
+
         object.traverse((obj) => {
 
             if (obj.geometry) {

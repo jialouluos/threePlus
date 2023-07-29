@@ -1,44 +1,43 @@
-// async function testSometing() {
-//   console.log("执行testSometing");
-//   return "testSometing";
-// }
-// async function testAsync() {
-//   console.log("执行testAsync");
-//   return Promise.resolve("hello async");
-// }
+/*
+ * @Author: haowen.li1
+ * @Date: 2023-07-29 11:00:32
+ * @LastEditors: haowen.li1
+ * @LastEditTime: 2023-07-29 17:22:49
+ * @Description:class z
+ */
 
-// async function test() {
-//   console.log("test start...");
-//   const v1 = await testSometing();
-//   console.log(v1);
-//   const v2 = await testAsync();
-//   console.log(v2);
-//   console.log(v1, v2);
-// }
+class Test {
+  name = 'haoWen123'
+  static static_name = 'static_name'
+  constructor() {
+    this.cons_name = 'cona_name'
+  }
+  getname1() {
+    return {
+      tets: this.getname2()
+    }
+  }
+  getname2 = () => {
+    console.log(this.name)
+    return {
+      heh: this.getname3()
+    }
+  }
+  getname3 = () => {
+    return 'name3'
+  }
+}
+const tets = new Test()
+tets.getname1()
+tets.getname2()
+console.log(tets)
 
-// test();
+let arr = [11, 22, 33, 44]
+const obj = {
+  name: 1,
+  name2: 2
+}
+for (const value of Object.entries(obj)) {
+  console.log(value)
+}
 
-// var promise = new Promise(resolve => {
-//   console.log("promise start..");
-//   resolve("promise");
-// }); //3
-// promise.then(val => console.log(val));
-
-// console.log("test end...");
-
-// const test = () => {
-//   test2();
-// };
-const test2 = async () => {
-  const res = await new Promise((_res, _rej) => {
-    setTimeout(() => {
-      _rej(1);
-    }, 200);
-  }).catch(res => {
-    console.log(res);
-  });
-  // res.then(res => {
-  //   console.log(res);
-  // });
-};
-test2();

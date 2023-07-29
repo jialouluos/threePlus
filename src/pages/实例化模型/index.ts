@@ -37,7 +37,7 @@ export default class extends Main {
         this.scene.add(group);
     }
     initInstanceMesh() {
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+        this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
             const instance = new InstanceModel(res.scene, this.drawCount);
             for (let i = 0; i < this.drawCount; i++) {
                 const matrix4 = new THREE.Matrix4();
@@ -45,6 +45,7 @@ export default class extends Main {
                 matrix4.setPosition(new THREE.Vector3(position.x, position.y, position.z));
                 instance.setMatrixAt(this.data[i].userData.index, matrix4);
             }
+            Main.math.getMemory(this.scene, "normal");
             this.scene.add(instance.instance);
         });
     }
