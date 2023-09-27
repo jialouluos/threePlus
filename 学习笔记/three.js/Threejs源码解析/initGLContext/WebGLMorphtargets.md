@@ -1,4 +1,0 @@
-# WebGLMorphtargets
-
-## WebGLMorphtargets( gl )
-
