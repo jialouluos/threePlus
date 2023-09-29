@@ -168,7 +168,7 @@ export default class Main extends EventEmitter<I_Event> {
 	/**三方调试库 */
 	$gui: GUI;
 	/**三方性能探测器 */
-	private $stats: Stats;
+	private $stats: any;
 	/**数学 */
 	static math = new mathPlus();
 	/**shader片段 */
