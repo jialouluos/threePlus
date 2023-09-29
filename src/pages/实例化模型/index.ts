@@ -24,7 +24,7 @@ export default class extends Main {
     }
     onSceneCreated() {
         this.initData();
-        this.initInstanceMesh();
+        this.initNormalModel();
         this.initRayCater();
     }
     testInstancedMesh() {
@@ -50,36 +50,36 @@ export default class extends Main {
         });
     }
     initNormalModel() {
-        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+        this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
+            res.scene.position.set(Math.random() * 6, Math.random() * 16, Math.random() * 10);
             this.scene.add(res.scene);
-            this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-                res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+            this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
+                res.scene.position.set(Math.random() * 10, Math.random() * 16, Math.random() * 10);
                 this.scene.add(res.scene);
-                this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
+                this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
                     this.scene.add(res.scene);
-                    res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                    res.scene.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
 
-                    this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-                        res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                    this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
+                        res.scene.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
                         this.scene.add(res.scene);
-                        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-                            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                        this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
+                            res.scene.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
                             this.scene.add(res.scene);
-                            this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-                                res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                            this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
+                                res.scene.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
                                 this.scene.add(res.scene);
-                                this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-                                    res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                                this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
+                                    res.scene.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
                                     this.scene.add(res.scene);
-                                    this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-                                        res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                                    this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
+                                        res.scene.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
                                         this.scene.add(res.scene);
-                                        this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-                                            res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                                        this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
+                                            res.scene.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
                                             this.scene.add(res.scene);
-                                            this.modelLoadByGLTF.loadAsync("model/car.glb").then(res => {
-                                                res.scene.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 10);
+                                            this.modelLoadByGLTF.loadAsync("model/草.glb").then(res => {
+                                                res.scene.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
                                                 this.scene.add(res.scene);
                                                 console.log(Main.math.getMemory(this.scene, "normal"));
                                             });
@@ -121,7 +121,7 @@ export default class extends Main {
             return {
                 position: { x: index * 60, y: 0, z: (index - 2) * 60 },
                 userData: {
-                    info: Math.random() * 100001,
+                    info: Math.random() * 10001,
                     index
                 }
             };

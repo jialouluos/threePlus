@@ -1,4 +1,3 @@
-export default /*glsl */`
 uniform vec3 sunPosition;
 uniform float rayleigh;
 uniform float turbidity;
@@ -31,27 +30,26 @@ const float cutoffAngle = 1.6110731556870734;
 const float steepness = 1.5;
 const float EE = 1000.0;
 float sunIntensity(float zenithAngleCos) {
-    zenithAngleCos = clamp(zenithAngleCos, -1.0, 1.0);
-    return EE * max(0.0, 1.0 - pow(e, -((cutoffAngle - acos(zenithAngleCos)) / steepness)));
+        zenithAngleCos = clamp(zenithAngleCos, -1.0, 1.0);
+        return EE * max(0.0, 1.0 - pow(e, -((cutoffAngle - acos(zenithAngleCos)) / steepness)));
 }
 vec3 totalMie(float T) {
-    float c = (0.2 * T) * 10E-18;
-    return 0.434 * c * MieConst;
+        float c = (0.2 * T) * 10E-18;
+        return 0.434 * c * MieConst;
 }
 void main() {
-    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-    vWorldPosition = worldPosition.xyz;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    gl_Position.z = gl_Position.w; // set z to camera.far
-    vSunDirection = normalize(sunPosition);//得到太阳相对视点的方向
-    vSunE = sunIntensity(dot(vSunDirection, up));
-    vSunfade = 1.0 - clamp(1.0 - exp((sunPosition.y/ 450000.0)), 0.0, 1.0);
-    float rayleighCoefficient = rayleigh - (1.0 * (1.0 - vSunfade));
+        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+        vWorldPosition = worldPosition.xyz;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        gl_Position.z = gl_Position.w; // set z to camera.far
+        vSunDirection = normalize(sunPosition);//得到太阳相对视点的方向
+        vSunE = sunIntensity(dot(vSunDirection, up));
+        vSunfade = 1.0 - clamp(1.0 - exp((sunPosition.y / 450000.0)), 0.0, 1.0);
+        float rayleighCoefficient = rayleigh - (1.0 * (1.0 - vSunfade));
             // extinction (absorbtion + out scattering)
             // rayleigh coefficients
-    vBetaR = totalRayleigh * rayleighCoefficient;
+        vBetaR = totalRayleigh * rayleighCoefficient;
             // mie coefficients
-    vBetaM = totalMie(turbidity) * mieCoefficient;
-    v_uv = uv;
+        vBetaM = totalMie(turbidity) * mieCoefficient;
+        v_uv = uv;
 }
-`;
