@@ -47,6 +47,7 @@ interface I_Event {
 	pointerUp: (e: PointerEvent, mousePos: THREE.Vector2) => void;
 }
 export default class Main extends EventEmitter<I_Event> {
+	private static GlobalTime = { value: 0.0 };
 	constructor(el: string | HTMLElement, debug?: boolean) {
 		super();
 		if (typeof el === 'string') {
@@ -93,9 +94,6 @@ export default class Main extends EventEmitter<I_Event> {
 		};
 		this.mousePos = new THREE.Vector2(-100000, -100000);
 		this.$gsap = gsap;
-		this.u_Time = {
-			value: 0.0,
-		};
 		this.timeScale = 1.0;
 		this.$gui = new GUI();
 		this._clock = new THREE.Clock();
@@ -149,14 +147,15 @@ export default class Main extends EventEmitter<I_Event> {
 	modelLoadByGLTF: GLTFLoader;
 	/**HDR加载器 */
 	hdrLoader: RGBELoader;
-	/**uniform u_Time */
-	u_Time: {
-		value: number;
-	};
 	/**时间倍率 */
 	timeScale: number;
 	/**材质 */
-	material: THREE.ShaderMaterial | THREE.MeshStandardMaterial | THREE.PointsMaterial | THREE.SpriteMaterial;
+	material:
+		| THREE.ShaderMaterial
+		| THREE.MeshStandardMaterial
+		| THREE.PointsMaterial
+		| THREE.SpriteMaterial
+		| THREE.MeshLambertMaterial;
 	/**网格 */
 	geometry: THREE.BufferGeometry;
 	/**3D网格对象 */
@@ -175,6 +174,10 @@ export default class Main extends EventEmitter<I_Event> {
 	static glslChunk = glslShader;
 	/**销毁 */
 	static track = new Track();
+	/**uniform u_Time */
+	get u_Time() {
+		return Main.GlobalTime;
+	}
 	/**创建一个标准的渲染场景 */
 	initNormal(pos?: THREE.Vector3): void {
 		this.createRenderer();
@@ -291,7 +294,7 @@ export default class Main extends EventEmitter<I_Event> {
 		this.geometry = new THREE.PlaneGeometry(this.container.clientWidth / 8, this.container.clientHeight / 8, 1, 1);
 		this.material = new THREE.ShaderMaterial({
 			vertexShader: Main.glslChunk.glslTemplate.vertex_shader_base_template,
-			fragmentShader: Main.glslChunk.glslTemplate.fragement_shader_base_template,
+			fragmentShader: Main.glslChunk.glslTemplate.fragment_shader_base_template,
 			uniforms: {
 				u_Time: this.u_Time,
 			},
@@ -338,7 +341,6 @@ export default class Main extends EventEmitter<I_Event> {
 	onPointerUp = e => {
 		this.emit('pointerUp', e, this.mousePos);
 	};
-
 	onPointerDown = e => {
 		this.mousePos.x = e.clientX;
 		this.mousePos.y = e.clientY;
@@ -382,8 +384,8 @@ export default class Main extends EventEmitter<I_Event> {
 	render(): void {
 		this.renderer.setAnimationLoop(() => {
 			if (this._clock) {
-				this.u_Time.value = this._clock.getElapsedTime() * this.timeScale;
-				Main.math.update(this.u_Time.value);
+				Main.GlobalTime.value = this._clock.getElapsedTime() * this.timeScale;
+				Main.math.update(Main.GlobalTime.value);
 			}
 			if (this._controls) {
 				this._controls.update();
@@ -482,4 +484,7 @@ export default class Main extends EventEmitter<I_Event> {
 			this.handleSize();
 		}
 	};
+	add(...object: THREE.Object3D<THREE.Event>[]) {
+		return this.scene.add(...object);
+	}
 }
