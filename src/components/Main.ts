@@ -65,7 +65,7 @@ export default class Main extends EventEmitter<I_Event> {
 				// logarithmicDepthBuffer: true
 			},
 			setting: {
-				outputEncoding: THREE.sRGBEncoding,
+				outputColorSpace: THREE.SRGBColorSpace,
 			},
 			options: {
 				backgroundColor: new THREE.Color('#000'),
@@ -103,6 +103,7 @@ export default class Main extends EventEmitter<I_Event> {
 		this.modelLoadByGLTF = new GLTFLoader();
 		this.lightGroups = new THREE.Group();
 		this.hdrLoader = new RGBELoader().setPath('hdr/');
+		this.textureLoader = new THREE.TextureLoader().setPath('textures/');
 		this._rayCaster = new THREE.Raycaster();
 		const resizeObserver = new ResizeObserver(this.rendererDrawResize);
 		resizeObserver.observe(this.container!);
@@ -145,6 +146,8 @@ export default class Main extends EventEmitter<I_Event> {
 	modelLoadByDraco: GLTFLoader;
 	/**模型加载器 */
 	modelLoadByGLTF: GLTFLoader;
+	/**纹理加载器 */
+	textureLoader: THREE.TextureLoader;
 	/**HDR加载器 */
 	hdrLoader: RGBELoader;
 	/**时间倍率 */
@@ -484,7 +487,7 @@ export default class Main extends EventEmitter<I_Event> {
 			this.handleSize();
 		}
 	};
-	add(...object: THREE.Object3D<THREE.Event>[]) {
+	add(...object: THREE.Object3D<THREE.Object3DEventMap>[]) {
 		return this.scene.add(...object);
 	}
 }

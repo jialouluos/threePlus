@@ -13,7 +13,7 @@
   "exclude": [],
   "compilerOptions": {
     //target 用来指定ts被编译的es版本
-    "target": "es5",
+    "target": "ES2016",
     "module": "ESNext", //模块规范
     "lib": [
       "dom",

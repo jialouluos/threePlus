@@ -14,11 +14,11 @@
   "author": "harver",
   "license": "ISC",
   "dependencies": {
+    "@types/three": "^0.156.0",
     "eventemitter3": "^5.0.0",
-    "i": "^0.3.7",
     "path": "^0.12.7",
     "stats-js": "^1.0.1",
-    "three": "^0.148.0",
+    "three": "^0.157.0",
     "webpack": "^5.75.0",
     "webpack-dev-server": "^4.11.1"
   },
@@ -32,7 +32,6 @@
     "@babel/preset-typescript": "^7.18.6",
     "@foxglove/three-text": "^0.1.0",
     "@mapbox/tiny-sdf": "^2.0.6",
-    "@types/three": "^0.148.0",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "babel-loader": "^9.1.2",
