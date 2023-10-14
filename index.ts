@@ -6,7 +6,7 @@
  * @Description:
  */
 
-import Demo from '@/study/MeshPhongMaterial';
+import Demo from '@/study/MeshPhongMaterial应用(玻璃)';
 const start = () => {
 	const demo = new Demo('#root', true);
 	demo.init();

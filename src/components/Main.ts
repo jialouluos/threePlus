@@ -97,6 +97,7 @@ export default class Main extends EventEmitter<I_Event> {
 		this.timeScale = 1.0;
 		this.$gui = new GUI();
 		this._clock = new THREE.Clock();
+		this._globalEntity = { _this: this };
 		this.modelLoadByDraco = new GLTFLoader().setDRACOLoader(
 			new DRACOLoader().setDecoderPath('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/js/libs/draco/')
 		);
@@ -180,6 +181,14 @@ export default class Main extends EventEmitter<I_Event> {
 	/**uniform u_Time */
 	get u_Time() {
 		return Main.GlobalTime;
+	}
+	/**_globalEntity */
+	private _globalEntity: Record<string, any>;
+	set globalEntity(value: Record<string, any>) {
+		this._globalEntity = { ...(this._globalEntity ?? {}), ...value };
+	}
+	get globalEntity() {
+		return this._globalEntity;
 	}
 	/**创建一个标准的渲染场景 */
 	initNormal(pos?: THREE.Vector3): void {
@@ -348,6 +357,11 @@ export default class Main extends EventEmitter<I_Event> {
 		this.mousePos.x = e.clientX;
 		this.mousePos.y = e.clientY;
 	};
+
+	async onRenderBefore<T extends object>(initHook: () => T | Awaited<T>, cb: (data: Awaited<T>) => void) {
+		const res = await initHook();
+		cb(res);
+	}
 	/**在场景渲染完成之后 */
 	async onSceneCreatedAsync(): Promise<any> {}
 	/**在场景渲染完成之后 */
